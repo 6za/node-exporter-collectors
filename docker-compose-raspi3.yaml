@@ -1,0 +1,23 @@
+version: '2.1'
+services:
+    nodeexporter:
+      image: prom/node-exporter:v0.18.0
+      container_name: nodeexporter
+      ports:
+        - "9100:9100"
+      volumes:
+        - /proc:/host/proc:ro
+        - /sys:/host/sys:ro
+        - /:/rootfs:ro
+        - /var/lib/node_exporter/textfile_collector:/var/lib/node_exporter/textfile_collector:ro
+      command:
+        - '--path.procfs=/host/proc'
+        - '--path.rootfs=/rootfs'
+        - '--path.sysfs=/host/sys'
+        - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
+        - '--collector.textfile.directory=/var/lib/node_exporter/textfile_collector'
+      restart: unless-stopped
+      expose:
+        - 9100
+      labels:
+          org.label-schema.group: "monitoring"
